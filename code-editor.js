@@ -27,7 +27,7 @@ module.exports = function(RED) {
 		var html = String.raw`
 			<div id="${id}"></div>
 				
-			<script src="ui-code-editor/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+			<script src="ui-code-editor/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
 			<script>
 				(function(scope) {
 					scope.$watch("msg", function(msg) {
