@@ -1,0 +1,37 @@
+{
+	"name": "@miguelonlonlon/node-red-contrib-ui-code-editor",
+	"description": "Use this node to display a code editor.",
+	"keywords": [
+		"dashboard",
+		"node-red",
+		"code-editor",
+		"website",
+		"ui"
+	],
+	"version": "0.0.1",
+	"license": "MIT",
+	"author": {
+		"name": "Miguelon",
+		"email": "botbotones@protonmail.com"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:Miguelonlonlon/node-red-contrib-ui-code-editor.git"
+	},
+	"bugs": {
+		"url": "https://github.com/Miguelonlonlon/node-red-contrib-ui-code-editor/issues"
+	},
+	"homepage": "https://github.com/Miguelonlonlon/node-red-contrib-ui-code-editor#readme",
+	"peerDependencies": {
+		"node-red-dashboard": "*"
+	},
+	"node-red": {
+		"nodes": {
+			"ui_webview_modal": "code-editor.js"
+		}
+	},
+	"devDependencies": {
+		"ace-builds": "^1.5.3",
+		"gulp": "^4.0.2"
+	}
+}
