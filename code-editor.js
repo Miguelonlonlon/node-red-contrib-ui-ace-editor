@@ -5,46 +5,22 @@ var fs = require('fs');
 module.exports = function(RED) {
 
 	var count = 0;
-
+	var editor;
+	
 	function HTML(config) {
 		count++;
 		
-		var id = "ui-code-editor-" + count;
-		var filename = (config.filename && config.filename !== "") ? config.filename : "not-set";
-		var textOfFile = "";
-
-		if (filename !== "" && filename !== "not-set") {
-			if (!fs.existsSync(filename)) {
-				filename = "not-set";
-			} else {
-				fs.readFile(filename, 'utf8', function (err, file) {
-					if (err) { textOfFile = "Error leyendo el archivo."; }
-					else { textOfFile = file; }
-				});
-			}
-		}
+		var id = "ui-" + count;
 
 		var html = String.raw`
-			<div id="${id}"></div>
+			<div id='ui_code-editor-{{$id}}'>{{ textOfFile }}</div>
 				
 			<script src="ui-code-editor/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
-			<script>
-				(function(scope) {
-					scope.$watch("msg", function(msg) {
-						var filename = 'not-set';
-						filename = (msg && msg.filename) ? msg.filename : '${filename}';					
-
-						if (filename === 'not-set' || filename === '') { return; }
-
-						$("#${id}").html("${textOfFile}");
-					});
-				})(scope);
-			</script>
-			<script>
+			<!--script>
 				var editor = ace.edit("${id}");
 				editor.setTheme("ace/theme/monokai");
 				editor.session.setMode("ace/mode/javascript");
-			</script>
+			</script-->
 		`;
 		return html;
 	}
@@ -98,15 +74,52 @@ module.exports = function(RED) {
 							return orig.msg;
 						}
 					},
+					//initController: $scope => $scope.$watch( 'msg.filename', f => {
+					initController: function ($scope, events) {
+						$scope.inited = false;
+						$scope.textOfFile = "";
+						var codeeditordiv;
 
-					initController: function($scope, events) {
-						$scope.flag = true;   // not sure if this is needed?
+						var createCodeEditor = function(basefile) {
+							codeeditordiv = '#ui_code-editor-' + $scope.$eval('$id')
+                            if (basefile !== "" && basefile !== "not-set") {
+								if (!fs.existsSync(basefile)) {
+									$scope.textOfFile = "No existe el archivo.";
+								} else {
+									fs.readFile(basefile, 'utf8', function (err, file) {
+										if (err) { $scope.textOfFile = "Error leyendo el archivo."; }
+										else { $scope.textOfFile = file; }
+									});
+								}
+							} else {
+								$scope.textOfFile = "No se ha especificado el archivo.";
+							}
+							
+							editor = ace.edit(codeeditordiv);
+							editor.setTheme("ace/theme/monokai");
+							editor.session.setMode("ace/mode/javascript");
+                        };
 
-						$scope.init = function (config) {
-							$scope.config = config;
-						};	
-
+                        $scope.init = function (config) {
+                            $scope.config = config;
+							var filename = "not-set";
+							if (config.filename && config.filename !== "")
+								filename = config.filename;
+							
+                            codeeditordiv = '#ui_code-editor-' + $scope.$eval('$id')
+                            var stateCheck = setInterval(function() {
+                                if (document.querySelector(codeeditordiv) && $scope.textOfFile) {
+                                    clearInterval(stateCheck);
+                                    $scope.inited = true;
+                                    createCodeEditor(filename);
+                                }
+                            }, 40);
+                        };
 						
+						$scope.$watch( 'msg.filename', basefile => {
+                            createCodeEditor(basefile);
+                        });
+					//} )
 					}
 				});
 			}
