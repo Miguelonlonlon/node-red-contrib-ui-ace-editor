@@ -1,6 +1,5 @@
 /* eslint-disable indent */
 var path = require('path');
-var fs = require('fs');
 
 module.exports = function(RED) {
 
@@ -79,6 +78,7 @@ module.exports = function(RED) {
 						$scope.inited = false;
 						$scope.textOfFile = "";
 						var codeeditordiv;
+						var fs = require('fs');
 
 						var createCodeEditor = function(basefile) {
 							codeeditordiv = '#ui_code-editor-' + $scope.$eval('$id')
